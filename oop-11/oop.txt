@@ -1,0 +1,335 @@
+<?php
+/**
+ * ========Class 11.2========
+ * Class, Object, Method এবং Property নিয়ে পরিচিতি
+ * */
+
+class Human{
+    public $name;
+    function sayHi(){
+        echo "Hello\n";
+    }
+    function sayName(){
+        echo "My Name is {$this->name}";
+    }
+}
+class Cat{
+    function sayHi(){
+        echo "Meow\n";
+    }
+}
+class Doc{
+    function sayHi(){
+        echo "Woof\n";
+    }
+}
+
+$h1 = new Human();
+$h1->name = "sampad"; // set oparation
+$c1 = new Cat();
+$c1->sayHi();
+//$d = new Doc();
+
+$h1->sayHi();
+$h1->sayName();
+//echo $h1->name(); //get oparation
+
+/**
+ * ========Class 11.3========
+ * ক্লাসের কনস্ট্রাকটর মেথড যেটা ক্লাস থেকে অবজেক্ট তৈরী হবার সময় নিজে থেকেই রান হয়
+ * */
+class HumanNew
+{
+    public $name;
+    public $age;
+
+    public function __construct($personalName, $personAge = 0) // option argument set value
+    {
+        $this->name = $personalName;
+        $this->age = $personAge;
+    }
+
+    function sayHi()
+    {
+        echo "hello\n";
+        $this->sayName();
+    }
+
+    function sayName()
+    {
+        if($this->age){
+            echo "My name is {$this->name}\n, My age is {$this->age} years old.";
+        }else{
+            echo "My name is {$this->name}";
+        }
+
+    }
+}
+
+$h1 = new HumanNew('Sampad', 25);
+$h1->sayName();
+
+$h2 = new HumanNew('Ankit', 4);
+$h2->sayHi();
+
+/**
+ * ========Class 11.4========
+ * ক্লাসের পাবলিক এবং প্রাইভেট মেথড এবং প্রোপার্টিজ
+ * */
+class Fund{
+    public $fund; //privet property, method class er baire teke value pass kora jai na.
+    function __construct($initialFund)
+    {
+        $this->fund = $initialFund;
+    }
+
+    public function addFund($money){
+        $this->fund +=$money;
+    }
+
+    public function deductFund($money){
+        $this->fund -=$money;
+    }
+
+    public function getTotal(){
+        echo "Total Fund is {$this->fund}\n";
+    }
+}
+
+$ourFund = new Fund(100);
+$ourFund->fund = 75;
+$ourFund->getTotal();
+$ourFund->deductFund(10);
+$ourFund->getTotal();
+/**
+ * ========Class 11.5========
+ * একটা রিয়াল লাইফ ইউজফুল ক্লাস লেখা
+ * */
+class RGB
+{
+    private $color; //#ff0000
+    private $red;
+    private $green;
+    private $blue;
+
+    public function __construct($colorCode = '')
+    {
+        $this->color = ltrim($colorCode, '#');
+        $this->parseColor();
+    }
+
+    public function getColor()
+    {
+        return $this->color;
+    }
+
+    public function getRGBColor()
+    {
+        return array($this->red, $this->green, $this->blue);
+    }
+
+    public function readRGBColor()
+    {
+        echo "Red = {$this->red}\nGreen = {$this->green}\nBlue = {$this->blue}";
+    }
+
+    public function setColor($colorCode)
+    {
+        $this->color = ltrim($colorCode, '#');
+        $this->parseColor();
+    }
+
+    private function parseColor()
+    {
+        if ($this->color) {
+            list($this->red, $this->green, $this->blue) = sscanf($this->color, '%02x%02x%02x');
+        } else {
+            list($this->red, $this->green, $this->blue) = array(0, 0, 0);
+        }
+    }
+
+    public function getRed()
+    {
+        return $this->red;
+    }
+
+    public function getGreen()
+    {
+        return $this->green;
+    }
+
+    public function getBlue()
+    {
+        return $this->blue;
+    }
+}
+
+$myColor = new RGB("#ffffff");
+$myColor->readRGBColor();
+//echo $myColor->getBlue();
+/**
+ * ========Class 11.6========
+ * ইনহেরিটেন্স নিয়ে আলোচনা
+ * */
+class Animal
+{
+    protected $name;
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+    }
+
+    public function eat()
+    {
+        echo "{$this->name} is eating";
+    }
+
+    public function run()
+    {
+        echo "{$this->name} is running";
+    }
+
+    public function sleep()
+    {
+        echo "{$this->name} is sleeping";
+    }
+
+    public function greet()
+    {
+
+    }
+
+    protected function addTitle($title)
+    { // protected method
+        $this->name = $title . " " . $this->name;
+    }
+}
+
+class Human extends Animal
+{
+    public function greet()
+    {
+        echo "Hi";
+    }
+
+    public function call()
+    {
+        echo "hello";
+    }
+}
+
+class Cat extends Animal
+{
+    public function say()
+    {
+        $this->addTitle("Mr.");
+    }
+
+    public function greet()
+    {
+        echo "Meow";
+    }
+}
+
+$sampad = new Human('Sampad');
+$sampad->eat();
+echo "<br/>";
+$mom = new Cat('Mom');
+$mom->eat();
+echo "<br/>";
+$mom->sleep();
+echo "<br/>";
+$mom->say();
+/**
+ * ========Class 11.7========
+ * প্যারেন্ট এবং চাইল্ড ক্লাসের স্কোপ নিয়ে আলোচনা
+ * */
+/*
+ * parent class এবং child class
+ * দুইটা class এর মধ্যে যদি একই method নাম থাকে আর ২য় class মানে child class কে call করে তাহলে parent method call হবে না। parent method টিকে call করতে হলে......
+ * */
+
+class parentClass
+{
+    protected $name;
+
+    public function __construct($name)
+    {
+        $this->name = $name; // show parent method
+        $this->sayHi();
+    }
+
+    function sayHi()
+    {
+        echo "Hi from {$this->name}";
+    }
+}
+
+class childClass extends parentClass
+{
+    function sayHi()
+    {
+        parent::sayHi();  // show parent method
+        echo "hello";
+    }
+}
+$cc = new childClass("abcd");
+/**
+ * ========Class 11.7========
+ * ইনহেরিটেন্স নিয়ে আরও উদাহরন
+ * */
+class Shape{
+    protected $name;
+    protected $area;
+
+    public function __construct($name)
+    {
+        $this->name = $name;
+        $this->calculateArea();
+    }
+    public function getArea()
+    {
+        echo "This {$this->name}'s area is {$this->area}";
+    }
+    public function calculateArea()
+    {
+    }
+
+}
+
+class Triangle extends shape{
+    private $a, $b, $c;
+    public function __construct( $a, $b, $c)
+    {
+        $this->a = $a;
+        $this->b = $b;
+        $this->c = $c;
+        parent::__construct("Triangle");
+    }
+    public function calculateArea()
+    {
+        $perimeter = ($this->a+$this->b+$this->c)/2;
+        $this->area = sqrt($perimeter * ($perimeter-$this->a) * ($perimeter - $this->b)* ($perimeter - $this->c));
+    }
+}
+
+class Rectangle extends shape{
+    private $a, $b;
+    public function __construct($a, $b)
+    {
+        $this->a = $a;
+        $this->b = $b;
+        parent::__construct("Rectangle");
+    }
+    public function calculateArea()
+    {
+        $this->area = $this->a * $this->b;
+    }
+}
+$r = new Rectangle(2,4);
+$r->getArea();
+echo "<br>";
+$t = new Triangle(10,12,8);
+$t->getArea();
+
