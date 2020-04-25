@@ -276,7 +276,7 @@ class childClass extends parentClass
 }
 $cc = new childClass("abcd");
 /**
- * ========Class 11.7========
+ * ========Class 11.8========
  * ইনহেরিটেন্স নিয়ে আরও উদাহরন
  * */
 class Shape{
@@ -297,7 +297,6 @@ class Shape{
     }
 
 }
-
 class Triangle extends shape{
     private $a, $b, $c;
     public function __construct( $a, $b, $c)
@@ -313,7 +312,6 @@ class Triangle extends shape{
         $this->area = sqrt($perimeter * ($perimeter-$this->a) * ($perimeter - $this->b)* ($perimeter - $this->c));
     }
 }
-
 class Rectangle extends shape{
     private $a, $b;
     public function __construct($a, $b)
@@ -332,4 +330,193 @@ $r->getArea();
 echo "<br>";
 $t = new Triangle(10,12,8);
 $t->getArea();
+/**
+ * ========Class 11.9========
+ * oop তে অ্যাবস্ট্রাক্ট ক্লাস এবং অ্যাবস্ট্রাক্ট মেথড
+ * অ্যাবস্ট্রাক্ট ক্লাস এ final method
+ * */
+<?php
+
+// abstract class এর যতগুলা abstract method আছে সবগুলা method child/extends class এ Implement করতে হবে।
+// abstract class কে new করে object করা যাবে না echo করা যাবে না extends শুধু করা যাবে
+// abstract method protected হলে child class এ protected/public করা যাবে।
+
+abstract class Shape{
+    abstract protected function getArea(); // abstract method হল এদের কোন body থাকবে না এদের কে child class এ extends করতে হবে।
+    abstract function getPerimeter(); // abstract method না হলে child class এ method টা Implement করতে হবে না।
+}
+class Rectangle extends Shape{
+    private $base, $height;
+    function __construct($base, $height)
+    {
+        $this->base = $base;
+        $this->height = $height;
+    }
+    public function setBase($base){
+        $this->base = $base;
+    }
+    public function setHeight($height){
+        $this->height = $height;
+    }
+    function getArea(){
+        return $this->base*$this->height;
+    }
+    function getPerimeter(){
+    }
+}
+class Triangle extends Shape{
+    function getArea(){
+    }
+    function getPerimeter(){
+    }
+}
+$triangle = new Rectangle(5,8);
+echo $triangle->getArea();
+/**
+ * ========Class 11.10========
+ * ইনহেরিটেন্সে ফাইনাল কিওয়ার্ডের ব্যবহার
+ * */
+// abstract class এ method এ final method use করলে ওই method টি আর child class লেখা লাগেব না।
+// এটি normal class এ একই কাজ করে
+abstract class one{
+   final function m_one(){
+        echo "same content for final method";
+    }
+}
+class two extends one{
+// m_one method টি call করা লাগেব না
+}
+$show = new two();
+$show ->m_one();
+/**
+ * ========Class 11.11========
+ * কিভাবে ফোর্স করার মাধ্যমে ওওপি দিয়ে বেটার কোড লেখা যায়
+ * */
+//
+class Shape{
+}
+class Shapes{
+    private $shapes;
+    function __construct(){
+        $this->shapes = [];
+    }
+    function addShape( Shape $shape ){ // এখানে Shape হল Shape class কে extends করলে এটা count হবে।
+        array_push($this->shapes, $shape);
+    }
+    function totalShapes(){
+        return count($this->shapes);
+    }
+}
+class Rectangle extends Shape{
+}
+class Triangle extends Shape{
+}
+class Student{
+// এখানে Student class Shape class কে extends না করার কারণে এই object টি count হয় নাই।
+// কারণ আমরা বলে দিয়েছি addShape method এর ভিতরে Shape class extends করা আছে এমন array pass করা।
+}
+$shapesCollection = new Shapes();
+$shapesCollection->addShape(new Rectangle());
+$shapesCollection->addShape(new Triangle());
+//$shapesCollection->addShape(new Student()); // Student class Shape class কে extends করে নাই তাই error আসবে
+echo $shapesCollection->totalShapes();
+
+/**
+ * ========Class 11.12========
+ * ইন্টারফেস নিয়ে আলোচনা
+ * */
+// interface class কে extends করা যায় না implements করা হয়।
+// একটা interface class আরেকটা interface class কে extends করতে পারে
+// abstract class এর মত interface method এ সবগুলা method child/implements class এ Implement করতে হবে।
+interface BaseAnimal{
+    function isAlive();
+    function canEat($param1, $param2);
+    function breed();
+}
+class Animal implements BaseAnimal{
+    function isAlive(){}
+    function canEat($pm1, $pm2){}
+    function breed(){}
+}
+interface BaseHuman extends BaseAnimal{
+    function canTalk();
+}
+class Human implements BaseHuman{ // BaseHuman interface এর যত method আছে এবং extends করা class এর method সবগুলা যোগ করতে হবে।
+    function isAlive(){}
+    function canEat($pm1, $pm2){}
+    function breed(){}
+    function canTalk(){}
+}
+$h = new Human();
+echo $h instanceof BaseHuman; // $h object কার interface তা check করা যায়।
+/**
+ * ========Class 11.13========
+ * ক্লাসের স্ট্যাটিক মেথড এবং প্রোপার্টিজ
+ * class এ স্ট্যাটিক মেথড call করলে তার class কে new দিয়ে object করা লাগে না
+ * */
+class mathCalculator{
+    //private $number;
+    static $num;
+    static function fibonacci($n){
+        //$this->number = 12; // static method তাই এখানে object তৈরি করা হয় নি তাই $this কাজ করবে না।
+        self::$num = 6;
+        echo $n;
+        self::doSomething();
+    }
+    static function doSomething(){
+        echo 'doing something';
+    }
+    function nomal(){ // static method কে normal method এ call করতে দুইভাবে ই করা যায়
+        self::$num = 'sampad'; // static property normal method এইভাবে call করতে হবে।
+        //self::doSomething();
+        $this->doSomething(); // object করা হলেই $this-> দিয়ে করা যাবে
+    }
+}
+mathCalculator::fibonacci(6);
+echo '<br/>';
+$n = new mathCalculator();
+$n->nomal();
+echo '<br/>';
+echo mathCalculator::$num; // static method property echo করতে হলে।
+echo '<br/>';
+/**
+ * ========Class 11.14========
+ * চাইল্ড ক্লাসে স্ট্যাটিক মেথড ওভাররাইড নিয়ে আলোচনা
+ *
+ * */
+class A{
+    static function sayHi(){
+        echo "Say hi from A";
+    }
+}
+class B extends A{
+    static function sayHi(){
+        echo "Say hi from B";
+        echo '<br/>';
+        parent::sayHi(); // extends করা method কে call করতে।
+    }
+}
+B::sayHi(); // same method হলে শেষ method বেশি priority পাবে।
+/**
+ * ========Class 11.15========
+ * স্ট্যাটিক স্কোপ নিয়ে আলোচনা
+ * */
+class C{
+    //private static $name; // static method এর ক্ষেত্রে static private property করলে শুধু ওই class কাজ করা যাবে extends class এ কাজ করা যাবে না।
+    protected static $name; //protected হলে extends class এ call করা যাবে।
+    static function sayHi(){
+        self::$name = 'privet static method';
+        echo "Say hi from A";
+
+    }
+}
+class D extends C{
+    static function sayHi(){
+        parent::sayHi();
+        echo parent::$name;
+        echo "Say hi from B";
+    }
+}
+D::sayHi();
+
 
